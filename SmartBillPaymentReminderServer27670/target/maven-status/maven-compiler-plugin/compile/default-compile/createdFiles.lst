@@ -2,6 +2,7 @@ smartbill/server/dao/PaymentDAO.class
 smartbill/server/model/User.class
 smartbill/server/dao/impl/CategoryDAOImpl.class
 smartbill/server/service/impl/UserServiceImpl.class
+smartbill/server/service/OTPService.class
 smartbill/server/util/HibernateUtil.class
 smartbill/server/service/ReminderService.class
 smartbill/server/model/Payment.class
@@ -21,6 +22,7 @@ smartbill/server/dao/ReminderDAO.class
 smartbill/server/dao/impl/ReminderDAOImpl.class
 smartbill/server/service/impl/CategoryServiceImpl.class
 smartbill/server/dao/impl/PaymentDAOImpl.class
+smartbill/server/service/impl/OTPServiceImpl.class
 smartbill/server/service/UserService.class
 smartbill/server/dao/impl/BillDAOImpl.class
 smartbill/server/service/impl/BillServiceImpl.class

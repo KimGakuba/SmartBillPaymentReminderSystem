@@ -6,7 +6,6 @@ import java.rmi.registry.Registry;
 import java.util.List;
 import javax.swing.*;
 import smartbill.server.model.Bill;
-import smartbill.server.model.Payment;
 import smartbill.server.model.User;
 import smartbill.server.service.BillService;
 import smartbill.server.service.PaymentService;
@@ -26,6 +25,7 @@ public class DashboardPanel extends JPanel {
     private static final Color SUCCESS   = new Color(40, 167, 69);
     private static final Color DANGER    = new Color(220, 53, 69);
     private static final Color WARNING   = new Color(255, 193, 7);
+    private static final Color DIVIDER   = new Color(230, 220, 210);
 
     private JLabel lblTotalBills;
     private JLabel lblPaidBills;
@@ -50,71 +50,88 @@ public class DashboardPanel extends JPanel {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
                 "Could not connect to server.",
-                "Connection Error", JOptionPane.ERROR_MESSAGE);
+                "Connection Error",
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void buildUI() {
-        // ── Page Title ──
-        JPanel titleBar = new JPanel(null);
+        JPanel wrapper = new JPanel(new BorderLayout(20, 20));
+        wrapper.setBackground(BG);
+        wrapper.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JPanel titleBar = new JPanel(new BorderLayout());
         titleBar.setBackground(BG);
-        titleBar.setPreferredSize(new Dimension(880, 60));
+
+        JPanel titleText = new JPanel();
+        titleText.setOpaque(false);
+        titleText.setLayout(new BoxLayout(titleText, BoxLayout.Y_AXIS));
 
         JLabel lblPage = new JLabel("Dashboard");
-        lblPage.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblPage.setFont(new Font("Segoe UI", Font.BOLD, 32));
         lblPage.setForeground(PRIMARY);
-        lblPage.setBounds(25, 15, 200, 30);
-        titleBar.add(lblPage);
 
         JLabel lblSub = new JLabel("Overview of your billing activity");
-        lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         lblSub.setForeground(SECONDARY);
-        lblSub.setBounds(25, 42, 300, 18);
-        titleBar.add(lblSub);
 
-        add(titleBar, BorderLayout.NORTH);
+        titleText.add(lblPage);
+        titleText.add(Box.createVerticalStrut(5));
+        titleText.add(lblSub);
 
-        // ── Main Content ──
-        JPanel content = new JPanel(null);
-        content.setBackground(BG);
+        titleBar.add(titleText, BorderLayout.WEST);
+        wrapper.add(titleBar, BorderLayout.NORTH);
 
-        // ── Stat Cards ──
-        lblTotalBills      = statValue("0");
-        lblPaidBills       = statValue("0");
-        lblOverdueBills    = statValue("0");
+        lblTotalBills = statValue("0");
+        lblPaidBills = statValue("0");
+        lblOverdueBills = statValue("0");
         lblPendingReminders = statValue("0");
 
-        content.add(statCard("Total Bills",       lblTotalBills,       PRIMARY,  20,  10));
-        content.add(statCard("Paid Bills",         lblPaidBills,        SUCCESS, 230,  10));
-        content.add(statCard("Overdue Bills",      lblOverdueBills,     DANGER,  440,  10));
-        content.add(statCard("Pending Reminders",  lblPendingReminders, WARNING, 650,  10));
+        JPanel statsPanel = new JPanel(new GridLayout(1, 4, 18, 18));
+        statsPanel.setBackground(BG);
 
-        // ── Recent Bills ──
+        statsPanel.add(statCard("Total Bills", lblTotalBills, PRIMARY));
+        statsPanel.add(statCard("Paid Bills", lblPaidBills, SUCCESS));
+        statsPanel.add(statCard("Overdue Bills", lblOverdueBills, DANGER));
+        statsPanel.add(statCard("Pending Reminders", lblPendingReminders, WARNING));
+
+        JPanel centerPanel = new JPanel(new BorderLayout(0, 18));
+        centerPanel.setBackground(BG);
+        centerPanel.add(statsPanel, BorderLayout.NORTH);
+
+        JPanel recentCard = new JPanel(new BorderLayout());
+        recentCard.setBackground(WHITE);
+        recentCard.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(DIVIDER, 1),
+            BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        ));
+
         JLabel lblRecent = new JLabel("Recent Bills");
-        lblRecent.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        lblRecent.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblRecent.setForeground(PRIMARY);
-        lblRecent.setBounds(20, 145, 200, 25);
-        content.add(lblRecent);
+        recentCard.add(lblRecent, BorderLayout.NORTH);
 
         recentPanel = new JPanel();
         recentPanel.setLayout(new BoxLayout(recentPanel, BoxLayout.Y_AXIS));
         recentPanel.setBackground(WHITE);
-        recentPanel.setBorder(BorderFactory.createLineBorder(SECONDARY, 1));
 
         JScrollPane scroll = new JScrollPane(recentPanel);
-        scroll.setBounds(20, 175, 840, 350);
         scroll.setBorder(BorderFactory.createEmptyBorder());
-        content.add(scroll);
+        scroll.getViewport().setBackground(WHITE);
 
-        add(content, BorderLayout.CENTER);
+        recentCard.add(scroll, BorderLayout.CENTER);
+        centerPanel.add(recentCard, BorderLayout.CENTER);
+
+        wrapper.add(centerPanel, BorderLayout.CENTER);
+        add(wrapper, BorderLayout.CENTER);
     }
 
     public void loadData() {
         try {
             List<Bill> bills = billService.getBillsByUser(loggedInUser.getUserId());
 
-            int total   = bills.size();
-            int paid    = (int) bills.stream()
+            int total = bills.size();
+            int paid = (int) bills.stream()
                 .filter(b -> "Paid".equalsIgnoreCase(b.getStatus())).count();
             int overdue = (int) bills.stream()
                 .filter(b -> "Overdue".equalsIgnoreCase(b.getStatus())).count();
@@ -126,10 +143,8 @@ public class DashboardPanel extends JPanel {
             lblOverdueBills.setText(String.valueOf(overdue));
             lblPendingReminders.setText(String.valueOf(pending));
 
-            // Recent bills
             recentPanel.removeAll();
 
-            // Header row
             JPanel headerRow = tableRow(
                 new Color(0xF0, 0xE8, 0xE0), true,
                 "Bill Name", "Amount (RWF)", "Due Date", "Recurrence", "Status"
@@ -148,11 +163,11 @@ public class DashboardPanel extends JPanel {
                 recentPanel.add(row);
             }
 
-            // Notify overdue
             if (overdue > 0) {
                 JOptionPane.showMessageDialog(this,
                     "You have " + overdue + " overdue bill(s)! Please review them.",
-                    "Overdue Alert", JOptionPane.WARNING_MESSAGE);
+                    "Overdue Alert",
+                    JOptionPane.WARNING_MESSAGE);
             }
 
             recentPanel.revalidate();
@@ -161,45 +176,48 @@ public class DashboardPanel extends JPanel {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
                 "Error loading dashboard: " + e.getMessage(),
-                "Error", JOptionPane.ERROR_MESSAGE);
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private JPanel statCard(String title, JLabel valueLabel, Color color, int x, int y) {
-        JPanel card = new JPanel(null);
+    private JPanel statCard(String title, JLabel valueLabel, Color color) {
+        JPanel card = new JPanel(new BorderLayout());
         card.setBackground(WHITE);
-        card.setBorder(BorderFactory.createMatteBorder(0, 4, 0, 0, color));
-        card.setBounds(x, y, 195, 100);
+        card.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 6, 0, 0, color),
+            BorderFactory.createEmptyBorder(18, 18, 18, 18)
+        ));
 
         JLabel lblTitle = new JLabel(title);
-        lblTitle.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 17));
         lblTitle.setForeground(SECONDARY);
-        lblTitle.setBounds(15, 18, 165, 18);
-        card.add(lblTitle);
 
-        valueLabel.setBounds(15, 42, 165, 38);
-        card.add(valueLabel);
+        card.add(lblTitle, BorderLayout.NORTH);
+        card.add(valueLabel, BorderLayout.CENTER);
 
         return card;
     }
 
     private JLabel statValue(String val) {
         JLabel lbl = new JLabel(val);
-        lbl.setFont(new Font("Segoe UI", Font.BOLD, 32));
+        lbl.setFont(new Font("Segoe UI", Font.BOLD, 42));
         lbl.setForeground(PRIMARY);
         return lbl;
     }
 
     private JPanel tableRow(Color bg, boolean isHeader,
-                             String col1, String col2, String col3, String col4, String col5) {
+                            String col1, String col2, String col3,
+                            String col4, String col5) {
         JPanel row = new JPanel(new GridLayout(1, 5));
         row.setBackground(bg);
-        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
-        row.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(230, 220, 210)));
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
+        row.setPreferredSize(new Dimension(1000, 44));
+        row.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, DIVIDER));
 
         Font font = isHeader
-            ? new Font("Segoe UI", Font.BOLD, 12)
-            : new Font("Segoe UI", Font.PLAIN, 12);
+            ? new Font("Segoe UI", Font.BOLD, 15)
+            : new Font("Segoe UI", Font.PLAIN, 15);
 
         for (String text : new String[]{col1, col2, col3, col4, col5}) {
             JLabel lbl = new JLabel("  " + text);
@@ -207,7 +225,7 @@ public class DashboardPanel extends JPanel {
             lbl.setForeground(isHeader ? PRIMARY : Color.DARK_GRAY);
             row.add(lbl);
         }
+
         return row;
     }
-
 }

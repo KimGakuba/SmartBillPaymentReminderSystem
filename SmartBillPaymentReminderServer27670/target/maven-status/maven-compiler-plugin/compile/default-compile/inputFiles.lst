@@ -16,11 +16,13 @@
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/model/User.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/service/BillService.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/service/CategoryService.java
+/home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/service/OTPService.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/service/PaymentService.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/service/ReminderService.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/service/UserService.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/service/impl/BillServiceImpl.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/service/impl/CategoryServiceImpl.java
+/home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/service/impl/OTPServiceImpl.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/service/impl/PaymentServiceImpl.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/service/impl/ReminderServiceImpl.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/service/impl/UserServiceImpl.java

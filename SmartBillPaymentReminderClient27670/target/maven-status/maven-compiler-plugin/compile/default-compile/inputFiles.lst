@@ -1,6 +1,7 @@
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/client/ClientMain.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/client/view/LoginFrame.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/client/view/MainFrame.java
+/home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/client/view/OTPVerificationFrame.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/client/view/RegisterFrame.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/client/view/panels/BillPanel.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/client/view/panels/CategoryPanel.java
@@ -15,6 +16,7 @@
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/server/model/User.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/server/service/BillService.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/server/service/CategoryService.java
+/home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/server/service/OTPService.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/server/service/PaymentService.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/server/service/ReminderService.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/server/service/UserService.java

@@ -4,6 +4,7 @@ import java.awt.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -51,7 +52,6 @@ public class BillPanel extends JPanel {
     }
 
     private void buildUI() {
-        // ── Top Bar ──
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setBackground(WHITE);
         topBar.setBorder(BorderFactory.createCompoundBorder(
@@ -93,7 +93,6 @@ public class BillPanel extends JPanel {
         topBar.add(lblTitle, BorderLayout.WEST);
         topBar.add(controls, BorderLayout.EAST);
 
-        // ── Table ──
         String[] cols = {"ID", "Bill Name", "Amount (RWF)", "Due Date",
                          "Recurrence", "Status", "Category"};
         tableModel = new DefaultTableModel(cols, 0) {
@@ -117,7 +116,6 @@ public class BillPanel extends JPanel {
         add(topBar, BorderLayout.NORTH);
         add(scroll, BorderLayout.CENTER);
 
-        // Actions
         btnSearch.addActionListener(e -> filterBills());
         btnAdd.addActionListener(e -> showBillDialog(null));
         btnEdit.addActionListener(e -> editSelected());
@@ -218,7 +216,6 @@ public class BillPanel extends JPanel {
         JPanel panel = new JPanel(null);
         panel.setBackground(BG);
 
-        // Dialog header
         JPanel dHeader = new JPanel(null);
         dHeader.setBackground(PRIMARY);
         dHeader.setBounds(0, 0, 460, 55);
@@ -230,7 +227,6 @@ public class BillPanel extends JPanel {
         dlblTitle.setBounds(20, 15, 300, 25);
         dHeader.add(dlblTitle);
 
-        // Fields
         addDLabel(panel, "Bill Name *",              20,  70);
         JTextField txtName = addDField(panel,         20,  93);
 
@@ -255,16 +251,35 @@ public class BillPanel extends JPanel {
         panel.add(cmbStatus);
 
         addDLabel(panel, "Category",                  20, 342);
-        JComboBox<String> cmbCategory = new JComboBox<>();
+        JComboBox<Category> cmbCategory = new JComboBox<>();
         cmbCategory.setBounds(20, 365, 415, 32);
         cmbCategory.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         panel.add(cmbCategory);
 
-        // Load categories
+        // ── Load categories as actual Category objects ──
+        List<Category> allCategories = new ArrayList<>();
         try {
-            List<Category> cats = categoryService.getAllCategories();
-            cmbCategory.addItem("-- Select Category --");
-            cats.forEach(c -> cmbCategory.addItem(c.getName()));
+            allCategories = categoryService.getAllCategories();
+            cmbCategory.addItem(null); // blank option
+            for (Category c : allCategories) {
+                cmbCategory.addItem(c);
+            }
+            // Show category name in dropdown
+            cmbCategory.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public java.awt.Component getListCellRendererComponent(
+                        JList<?> list, Object value, int index,
+                        boolean isSelected, boolean cellHasFocus) {
+                    super.getListCellRendererComponent(
+                        list, value, index, isSelected, cellHasFocus);
+                    if (value instanceof Category) {
+                        setText(((Category) value).getName());
+                    } else {
+                        setText("-- Select Category --");
+                    }
+                    return this;
+                }
+            });
         } catch (Exception ignored) {}
 
         // Populate if editing
@@ -274,9 +289,19 @@ public class BillPanel extends JPanel {
             txtDueDate.setText(existing.getDueDate());
             cmbRecurrence.setSelectedItem(existing.getRecurrence());
             cmbStatus.setSelectedItem(existing.getStatus());
+            // Pre-select existing category
+            if (existing.getCategories() != null && !existing.getCategories().isEmpty()) {
+                Category existingCat = existing.getCategories().get(0);
+                for (int i = 0; i < cmbCategory.getItemCount(); i++) {
+                    Category item = cmbCategory.getItemAt(i);
+                    if (item != null && item.getCategoryId() == existingCat.getCategoryId()) {
+                        cmbCategory.setSelectedIndex(i);
+                        break;
+                    }
+                }
+            }
         }
 
-        // Save button
         JButton btnSave = createBtn(
             existing == null ? "Save Bill" : "Update Bill", PRIMARY);
         btnSave.setBounds(20, 415, 180, 38);
@@ -288,13 +313,13 @@ public class BillPanel extends JPanel {
         panel.add(btnCancel);
 
         btnSave.addActionListener(e -> {
-            String name      = txtName.getText().trim();
-            String amountStr = txtAmount.getText().trim();
-            String dueDate   = txtDueDate.getText().trim();
+            String name       = txtName.getText().trim();
+            String amountStr  = txtAmount.getText().trim();
+            String dueDate    = txtDueDate.getText().trim();
             String recurrence = (String) cmbRecurrence.getSelectedItem();
             String status     = (String) cmbStatus.getSelectedItem();
+            Category selectedCategory = (Category) cmbCategory.getSelectedItem();
 
-            // Technical validations
             if (name.isEmpty()) {
                 JOptionPane.showMessageDialog(dialog,
                     "Bill name is required.", "Validation Error",
@@ -318,7 +343,6 @@ public class BillPanel extends JPanel {
                     "Amount must be a valid number.",
                     "Validation Error", JOptionPane.WARNING_MESSAGE); return;
             }
-            // Business validation
             if (amount <= 0) {
                 JOptionPane.showMessageDialog(dialog,
                     "Amount must be greater than zero.",
@@ -329,6 +353,14 @@ public class BillPanel extends JPanel {
                 if (existing == null) {
                     Bill bill = new Bill(name, amount, dueDate, recurrence,
                         status, LocalDateTime.now().toString(), loggedInUser);
+
+                    // ── Assign selected category ──
+                    if (selectedCategory != null) {
+                        List<Category> cats = new ArrayList<>();
+                        cats.add(selectedCategory);
+                        bill.setCategories(cats);
+                    }
+
                     billService.addBill(bill);
                     JOptionPane.showMessageDialog(dialog,
                         "Bill added successfully.",
@@ -339,6 +371,16 @@ public class BillPanel extends JPanel {
                     existing.setDueDate(dueDate);
                     existing.setRecurrence(recurrence);
                     existing.setStatus(status);
+
+                    // ── Update category ──
+                    if (selectedCategory != null) {
+                        List<Category> cats = new ArrayList<>();
+                        cats.add(selectedCategory);
+                        existing.setCategories(cats);
+                    } else {
+                        existing.setCategories(new ArrayList<>());
+                    }
+
                     billService.updateBill(existing);
                     JOptionPane.showMessageDialog(dialog,
                         "Bill updated successfully.",
@@ -385,5 +427,4 @@ public class BillPanel extends JPanel {
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return btn;
     }
-
 }

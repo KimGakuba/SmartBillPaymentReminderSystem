@@ -7,6 +7,7 @@ import smartbill.server.service.impl.CategoryServiceImpl;
 import smartbill.server.service.impl.PaymentServiceImpl;
 import smartbill.server.service.impl.ReminderServiceImpl;
 import smartbill.server.service.impl.UserServiceImpl;
+import smartbill.server.service.impl.OTPServiceImpl;
 
 public class ServerMain {
 
@@ -24,6 +25,9 @@ public class ServerMain {
             PaymentServiceImpl paymentService   = new PaymentServiceImpl();
             ReminderServiceImpl reminderService = new ReminderServiceImpl();
             CategoryServiceImpl categoryService = new CategoryServiceImpl();
+            OTPServiceImpl otpService = new OTPServiceImpl();
+registry.rebind("OTPService", otpService);
+System.out.println("  OTP Service registered.");
 
             // Register all services in the RMI registry
             registry.rebind("UserService",     userService);
