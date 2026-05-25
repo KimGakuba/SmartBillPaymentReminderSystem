@@ -8,6 +8,21 @@ import smartbill.server.util.HibernateUtil;
 import java.util.List;
 
 public class PaymentDAOImpl implements PaymentDAO {
+    
+    
+    @Override
+public List<Payment> findByUser(int userId) {
+    try (Session ss = HibernateUtil.getSessionFactory().openSession()) {
+        return ss.createQuery(
+            "SELECT p FROM Payment p WHERE p.bill.user.userId = :userId",
+            Payment.class)
+            .setParameter("userId", userId)
+            .list();
+    } catch (Exception e) {
+        System.err.println("Error finding payments by user: " + e.getMessage());
+        return null;
+    }
+}
 
     @Override
     public void save(Payment payment) {

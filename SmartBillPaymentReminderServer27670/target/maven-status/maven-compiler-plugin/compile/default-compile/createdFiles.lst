@@ -1,3 +1,4 @@
+smartbill/server/util/EmailService.class
 smartbill/server/dao/PaymentDAO.class
 smartbill/server/model/User.class
 smartbill/server/dao/impl/CategoryDAOImpl.class
@@ -7,6 +8,7 @@ smartbill/server/util/HibernateUtil.class
 smartbill/server/service/ReminderService.class
 smartbill/server/model/Payment.class
 smartbill/server/dao/CategoryDAO.class
+smartbill/server/util/EmailService$1.class
 smartbill/server/model/Category.class
 smartbill/server/dao/BillDAO.class
 smartbill/server/model/Bill.class

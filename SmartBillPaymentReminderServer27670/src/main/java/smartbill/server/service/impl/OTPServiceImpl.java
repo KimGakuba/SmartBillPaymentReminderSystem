@@ -5,75 +5,96 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import javax.mail.MessagingException;
+import smartbill.server.dao.impl.UserDAOImpl;
+import smartbill.server.model.User;
 import smartbill.server.service.OTPService;
+import smartbill.server.util.EmailService;
 
 public class OTPServiceImpl extends UnicastRemoteObject implements OTPService {
 
-    // Stores username -> OTP
     private static final Map<String, String> otpStore = new HashMap<>();
-
-    // Stores username -> expiry time (5 minutes)
     private static final Map<String, Long> otpExpiry = new HashMap<>();
 
-    private static final long OTP_VALIDITY_MS = 5 * 60 * 1000; // 5 minutes
+    private static final long OTP_VALIDITY_MS = 5 * 60 * 1000;
+
+    private final UserDAOImpl userDAO;
 
     public OTPServiceImpl() throws RemoteException {
         super();
+        this.userDAO = new UserDAOImpl();
     }
 
     @Override
     public String generateOTP(String username) throws RemoteException {
-        // Technical validation
+
         if (username == null || username.trim().isEmpty()) {
             throw new RemoteException("Username cannot be empty.");
         }
 
-        // Generate 6-digit OTP
-        String otp = String.format("%06d", new Random().nextInt(999999));
+        User user = userDAO.findByUsername(username);
 
-        // Store OTP with expiry
+        if (user == null) {
+            throw new RemoteException("User not found.");
+        }
+
+        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+            throw new RemoteException("No email found for this user.");
+        }
+
+        String otp = String.format("%06d", new Random().nextInt(1000000));
+
+        try {
+            EmailService.sendOTP(user.getEmail(), username, otp);
+        } catch (MessagingException e) {
+            throw new RemoteException(
+                    "Failed to send OTP email. Check Gmail App Password or internet connection. "
+                    + e.getMessage()
+            );
+        }
+
         otpStore.put(username, otp);
         otpExpiry.put(username, System.currentTimeMillis() + OTP_VALIDITY_MS);
 
-        // Simulate sending OTP — in production this would send an email/SMS
         System.out.println("============================================");
-        System.out.println("  OTP NOTIFICATION — SmartBill System");
-        System.out.println("  User     : " + username);
-        System.out.println("  OTP Code : " + otp);
-        System.out.println("  Expires  : 5 minutes");
+        System.out.println("OTP GENERATED AND SENT TO EMAIL");
+        System.out.println("User  : " + username);
+        System.out.println("Email : " + user.getEmail());
         System.out.println("============================================");
 
-        // Return OTP so client can display it in simulation mode
         return otp;
     }
 
     @Override
-    public boolean verifyOTP(String username, String otp) throws RemoteException {
-        // Technical validation
+    public boolean verifyOTP(String username, String otp)
+            throws RemoteException {
+
         if (username == null || username.trim().isEmpty()) {
             throw new RemoteException("Username cannot be empty.");
         }
+
         if (otp == null || otp.trim().isEmpty()) {
             throw new RemoteException("OTP cannot be empty.");
         }
 
-        // Check if OTP exists
-        if (!otpStore.containsKey(username)) {
-            throw new RemoteException("No OTP found for this user. Please request a new one.");
+        if (!otp.trim().matches("\\d{6}")) {
+            throw new RemoteException("OTP must be exactly 6 digits.");
         }
 
-        // Check if OTP has expired
+        if (!otpStore.containsKey(username)) {
+            throw new RemoteException("No OTP found. Please request a new one.");
+        }
+
         long expiry = otpExpiry.getOrDefault(username, 0L);
+
         if (System.currentTimeMillis() > expiry) {
             otpStore.remove(username);
             otpExpiry.remove(username);
             throw new RemoteException("OTP has expired. Please request a new one.");
         }
 
-        // Verify OTP
         boolean valid = otpStore.get(username).equals(otp.trim());
 
-        // Remove OTP after use
         if (valid) {
             otpStore.remove(username);
             otpExpiry.remove(username);
@@ -81,5 +102,4 @@ public class OTPServiceImpl extends UnicastRemoteObject implements OTPService {
 
         return valid;
     }
-
 }

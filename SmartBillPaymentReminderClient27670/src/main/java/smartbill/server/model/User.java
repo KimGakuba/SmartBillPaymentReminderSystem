@@ -11,17 +11,30 @@ public class User implements Serializable {
     private String password;
     private String phone;
     private String createdAt;
+    private String role;
     private List<Bill> bills;
 
     // Constructors
     public User() {}
 
-    public User(String username, String email, String password, String phone, String createdAt) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.phone = phone;
+    public User(String username, String email, String password,
+                String phone, String createdAt) {
+        this.username  = username;
+        this.email     = email;
+        this.password  = password;
+        this.phone     = phone;
         this.createdAt = createdAt;
+        this.role      = "USER";
+    }
+
+    public User(String username, String email, String password,
+                String phone, String createdAt, String role) {
+        this.username  = username;
+        this.email     = email;
+        this.password  = password;
+        this.phone     = phone;
+        this.createdAt = createdAt;
+        this.role      = role;
     }
 
     // Getters and Setters
@@ -43,7 +56,17 @@ public class User implements Serializable {
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+
     public List<Bill> getBills() { return bills; }
     public void setBills(List<Bill> bills) { this.bills = bills; }
+
+    public boolean isAdmin() { return "ADMIN".equals(this.role); }
+    
+    private boolean isActive = true;
+
+public boolean isActive() { return isActive; }
+public void setActive(boolean isActive) { this.isActive = isActive; }
 
 }

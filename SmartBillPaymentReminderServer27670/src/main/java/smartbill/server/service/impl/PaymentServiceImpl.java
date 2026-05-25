@@ -16,6 +16,16 @@ public class PaymentServiceImpl extends UnicastRemoteObject implements PaymentSe
         super();
         this.paymentDAO = new PaymentDAOImpl();
     }
+    
+    
+    
+    @Override
+public List<Payment> getPaymentsByUser(int userId) throws RemoteException {
+    if (userId <= 0) {
+        throw new RemoteException("Invalid user ID.");
+    }
+    return paymentDAO.findByUser(userId);
+}
 
     @Override
     public void addPayment(Payment payment) throws RemoteException {

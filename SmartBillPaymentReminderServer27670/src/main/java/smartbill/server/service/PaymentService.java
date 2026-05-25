@@ -13,5 +13,7 @@ public interface PaymentService extends Remote {
     List<Payment> getAllPayments() throws RemoteException;
     void updatePayment(Payment payment) throws RemoteException;
     void deletePayment(int paymentId) throws RemoteException;
+    // Add this method to both server and client PaymentService interfaces
+List<Payment> getPaymentsByUser(int userId) throws RemoteException;
 
 }

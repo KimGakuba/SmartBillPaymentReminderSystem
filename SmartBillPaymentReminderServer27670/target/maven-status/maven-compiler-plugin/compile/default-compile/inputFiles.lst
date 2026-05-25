@@ -26,4 +26,5 @@
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/service/impl/PaymentServiceImpl.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/service/impl/ReminderServiceImpl.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/service/impl/UserServiceImpl.java
+/home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/util/EmailService.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderServer27670/src/main/java/smartbill/server/util/HibernateUtil.java

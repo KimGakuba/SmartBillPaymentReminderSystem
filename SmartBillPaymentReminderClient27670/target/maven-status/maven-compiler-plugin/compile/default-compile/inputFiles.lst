@@ -3,6 +3,7 @@
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/client/view/MainFrame.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/client/view/OTPVerificationFrame.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/client/view/RegisterFrame.java
+/home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/client/view/panels/AdminPanel.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/client/view/panels/BillPanel.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/client/view/panels/CategoryPanel.java
 /home/ngabonziza-kim-gakuba/Documents/JAVA/SmartBillPaymentReminder/SmartBillPaymentReminderClient27670/src/main/java/smartbill/client/view/panels/DashboardPanel.java
